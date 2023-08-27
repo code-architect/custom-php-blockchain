@@ -1,4 +1,6 @@
 .idea
 test.txt
 test.php
-
+vendor
+**/__pycache__/
+Blockchain/Python_Package/virtual_env/
