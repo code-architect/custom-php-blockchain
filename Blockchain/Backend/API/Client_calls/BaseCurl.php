@@ -1,5 +1,5 @@
 <?php
-abstract class BaseCurl
+class BaseCurl
 {
     public static function curlSkeletonIfDataSend($curlObj, $OpType, $data)
     {
