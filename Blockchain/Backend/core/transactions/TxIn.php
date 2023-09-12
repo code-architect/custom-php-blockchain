@@ -14,4 +14,13 @@ class TxIn
         $this->scriptSig = $scriptSig ?? new Script();
         $this->sequence = $sequence;
     }
+
+    public function serialize()
+    {
+        $result = strrev($this->prev_tx);
+        $result .= intToLittleEndian($this->prev_index, 4);
+        $result .= $this->script_sig->serialize();
+        $result .= intToLittleEndian($this->sequence, 4);
+        return $result;
+    }
 }

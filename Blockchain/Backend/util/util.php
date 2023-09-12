@@ -10,11 +10,15 @@ function hash160($data) {
     return hash('ripemd160', $sha256Hash, true);
 }
 
-function intToLittleEndian($number, $length)
-{
-    // Use 'V' format for little-endian and unsigned long
-    $value = pack('V', $number);
-    return bin2hex($value);
+function intToLittleEndian($n, $length) {
+    // Convert an integer to a little-endian byte string of a specified length
+    $result = '';
+    for ($i = 0; $i < $length; $i++) {
+        $byte = $n & 0xFF; // Get the least significant byte
+        $result .= chr($byte); // Convert to a character and append to the result
+        $n >>= 8; // Shift the integer right by 8 bits
+    }
+    return $result;
 }
 
 function bytesNeeded($n)
@@ -32,6 +36,27 @@ function littleEndianToInt($b)
     $littleEndian = implode('', $reversedBytes);
     return hexdec(bin2hex($littleEndian));
 }
+
+
+function encode_varint($i) {
+    if ($i < 0xFD) {
+        return chr($i);
+    } elseif ($i < 0x10000) {
+        return "\xFD" . intToLittleEndian($i, 2);
+    } elseif ($i < 0x100000000) {
+        return "\xFE" . intToLittleEndian($i, 4);
+    } elseif ($i < 0x10000000000000000) {
+        return "\xFF" . intToLittleEndian($i, 8);
+    } else {
+        throw new Exception("integer too large: $i");
+    }
+}
+
+//try {
+//    $encoded = encode_varint(500);
+//} catch (Exception $e) {
+//}
+//echo bin2hex($encoded);
 
 // Example usage
 //$input = 'some data to hash';

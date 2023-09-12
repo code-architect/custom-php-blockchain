@@ -35,7 +35,7 @@ class Blockchain {
         $timestamp = time();
         $coinbaseInstance = new Coinbase($BlockHeight);
         $coinbaseTx = $coinbaseInstance->coinbaseTransaction();
-        $merkleRoot = ' ';
+        $merkleRoot = $coinbaseTx->TxId;
         $bits = 'ffff001f';
         $blockheader = new BlockHeader($GLOBALS['VERSION'], $prevBlockHash, $merkleRoot, $timestamp, $bits);
         $blockheader->mine();

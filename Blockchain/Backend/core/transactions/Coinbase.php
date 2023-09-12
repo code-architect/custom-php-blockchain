@@ -31,7 +31,10 @@ class Coinbase {
         $targetScript = Script::p2pkhScript($targetH160);
         $txOuts[] = new TxOut($targetAmount, $targetScript);
 
-        return new Tx(1, $txIns, $txOuts, 0);
+        $coinBaseTx = new Tx(1, $txIns, $txOuts, 0);
+        $coinBaseTx->TxId = $coinBaseTx->id();
+
+        return $coinBaseTx;
     }
 
     public function decodeBase58API($value)

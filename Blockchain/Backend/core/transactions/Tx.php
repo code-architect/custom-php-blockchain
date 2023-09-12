@@ -1,5 +1,5 @@
 <?php
-
+require_once 'Blockchain/Backend/util/util.php';
 class Tx
 {
     public $locktime;
@@ -14,13 +14,50 @@ class Tx
         $this->locktime = $locktime;
     }
 
+    /**
+     * @throws Exception
+     */
     public function serialize() {
-        $result = intToLittleEndian($this->version, 4);
-        $result .= count($this->txIns);
+        // Initialize an empty result string
+        $result = "";
 
-        // Add serialization logic here
+        // Serialize the version as a little-endian 4-byte integer
+        $result .= intToLittleEndian($this->version, 4);
 
+        // Serialize the number of transaction inputs as a variable-length integer
+        $result .= encode_varint(count($this->tx_ins));
+
+        // Serialize each transaction input
+        foreach ($this->tx_ins as $tx_in) {
+            $result .= $tx_in->serialize();
+        }
+
+        // Serialize the number of transaction outputs as a variable-length integer
+        $result .= encode_varint(count($this->tx_outs));
+
+        // Serialize each transaction output
+        foreach ($this->tx_outs as $tx_out) {
+            $result .= $tx_out->serialize();
+        }
+
+        // Serialize the locktime as a little-endian 4-byte integer
+        $result .= intToLittleEndian($this->locktime, 4);
+
+        // Return the serialized result
         return $result;
+    }
+
+    public function id() {
+        // Human-readable Tx id
+        return $this->hash()->hex();
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function hash() {
+        // Binary Hash of serialization
+        return strrev(hash256($this->serialize()));
     }
 
     public function isCoinbase() {
